@@ -1,0 +1,8 @@
+driver_file_path: ./chromedriver
+
+#Sites redundant at the moment
+#To run multiple instance run main command with a different link
+sites:
+  - https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-graphics-card-10219307-pdt.html
+  - https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-oc-graphics-card-10219306-pdt.html
+  - https://www.currys.co.uk/gbuk/computing/tablets-and-ereaders/tablets/apple-10-9-ipad-air-2020-64-gb-sky-blue-10210781-pdt.html?intcmpid=display~RR

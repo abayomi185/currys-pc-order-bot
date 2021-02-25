@@ -1,0 +1,163 @@
+from discord import message
+from discord.team import TeamMember
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+import yaml
+import random
+import time
+import os
+import sys
+import threading
+from discord_webhook import DiscordWebhook
+import pync
+
+conf_import = "./conf.yaml"
+secrets_import = "./secrets.yaml"
+
+with open(conf_import, "r") as conf_file:
+  config = yaml.safe_load(conf_file)
+
+with open(secrets_import, "r") as secrets_file:
+  secrets = yaml.safe_load(secrets_file)
+
+myid = secrets['disord_userid']
+webhook_url = secrets['webhook_url']
+
+driver = webdriver.Chrome(config['driver_file_path'])
+
+driver.set_window_size(1026,1000)
+
+driver_wait = 10
+
+def send_notif(message):
+  webhook = DiscordWebhook(url=webhook_url,
+                  content='{} Stock is available for\n{}'.format(myid, message))
+  response = webhook.execute()
+
+def send_notif2(message):
+  webhook = DiscordWebhook(url=webhook_url,
+                  content='{} Item has been purchased\n{}'.format(myid, message))
+  response = webhook.execute()
+
+
+def run_bot_instance(site_link):
+
+  driver.get(site_link)
+  WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
+
+  stock = False
+  count = False
+
+  while not stock:
+
+    checkout_page = False
+    basket_checkout = False
+    purchased = False
+
+    # if count:
+      # driver.back()
+
+    try:
+      add_to_basket = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="product-actions"]/div[4]/div[1]/button'))).click()
+      # try:
+      #   close_dialog = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[data-component="CloseBtn"]'))).click()
+      # except:
+      #   pass
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Continue to basket")]'))).click()
+      
+      checkout_page = True
+      send_notif(site_link)
+
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[2]/div/div/div[1]/button'))).click()
+      
+      postcode = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[aria-label="Postcode Checker"]')))
+      postcode.clear()
+      postcode.send_keys(secrets['postcode'])
+      time.sleep(1)
+
+      #search postcode
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="delivery_location"]/button[2]'))).click()
+      # WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[aria-label="Submit Search"]'))).click()
+      # time.sleep(2)
+      
+      #click delivery
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[2]/div[2]/div[3]/div[2]/div[1]/ul/li[2]'))).click()
+      # time.sleep(3)
+
+      #click free
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[2]/div[2]/div[3]/div[2]/div[2]/div/div[3]/div[1]/button'))).click()
+
+      email = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[autocomplete="email"]')))
+      email.clear()
+      email.send_keys(secrets['email'])
+
+      #continue after email
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[3]/div[2]/div[2]/div/div/form/button'))).click()
+      # time.sleep(4)
+      time.sleep(1)
+
+      password = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[type="password"]')))
+      password.clear()
+      password.send_keys(secrets['password'])
+
+      #Sign in button
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Sign in")]'))).click()
+
+      #Card button
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[4]/div[2]/div[2]/div[2]/div[2]/div[1]/button'))).click()
+
+      #Card Number
+      card_no = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="cardNumber"]')))
+      card_no.clear()
+      card_no.send_keys(secrets['cardno'])
+
+      #Card Holder Name
+      card_no = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="cardholderName"]')))
+      card_no.clear()
+      card_no.send_keys(secrets['holdername'])
+
+      #Card Month
+      month = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="expiryMonth"]')))
+      month.clear()
+      month.send_keys(secrets['mm'])
+
+      #Card Year
+      year = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="expiryYear"]')))
+      year.clear()
+      year.send_keys(secrets['yy'])
+
+      #Card Security Code
+      cvv = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="securityCode"]')))
+      cvv.clear()
+      cvv.send_keys(secrets['cvv'])
+
+      # Pay
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="submitButton"]'))).click()
+      purchased = True
+
+    except:
+      pass
+      
+    if not checkout_page:
+      print("Stock is not available")
+      time.sleep(random.random()*10)
+      driver.refresh()
+    # else:
+    #   # count = True
+    #   # notify("Stock Alert", "stock available for " + site_link)
+    #   # pync.notify("Stock available for " + site_link, open=site_link)
+    #   send_notif(site_link)
+    #   break
+
+    if purchased:
+      send_notif2(site_link)
+
+
+if __name__ == "__main__":
+  site = sys.argv[1]
+  run_bot_instance(site_link=site)
+  # send_notif("testing")
+
