@@ -1,9 +1,9 @@
 # currys-pc-order-bot
 To hit back against the woes I encountered trying to get a GPU in this "trying times"
 <br>
-######Use this software at YOUR OWN RISK. This software offers no guarantee. I do not assume any risk you might incure from using this software.
+###### Use this software at YOUR OWN RISK. This software offers no guarantee. I do not assume any risk you might incure from using this software.
 
-####Getting Started
+#### Getting Started
 
 To use the bot, confirm that you have chrome, python-pip. It would be ideal to install virtualenv or similar too.
 
@@ -25,7 +25,7 @@ Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in yo
 
 > Ensure that you have set up a Currys account and address info before use
 
-#####To run the bot:
+##### To run the bot:
 ```python3 buy-bot3.py <currys_pc_product_link>```
 
 Replacing ```<currys_pc_product_link>``` with the link to the product you wish to buy.
