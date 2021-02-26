@@ -22,13 +22,16 @@ You can then get the Chrome driver corresponding to your chrome version and Oper
 
 <br/>
 You're about ready to get your item from Curry's PC.
+
 <br/>
 
 Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in your personal details. 
 
 > Ensure that you have set up a Currys account and address info before use
 
-##### To run the bot:
+<br/>
+
+#### To run the bot:
 ```python3 buy-bot3.py <currys_pc_product_link>```
 
 Replacing ```<currys_pc_product_link>``` with the link to the product you wish to buy.
