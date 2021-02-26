@@ -1,5 +1,3 @@
-from discord import message
-from discord.team import TeamMember
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -12,7 +10,6 @@ import os
 import sys
 import threading
 from discord_webhook import DiscordWebhook
-import pync
 
 conf_import = "./conf.yaml"
 secrets_import = "./secrets.yaml"
@@ -62,10 +59,13 @@ def run_bot_instance(site_link):
 
     try:
       add_to_basket = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="product-actions"]/div[4]/div[1]/button'))).click()
-      # try:
-      #   close_dialog = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[data-component="CloseBtn"]'))).click()
-      # except:
-      #   pass
+     
+      if config['checkout_addon']:
+        try:
+          close_dialog = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[data-component="CloseBtn"]'))).click()
+        except:
+          pass
+      
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Continue to basket")]'))).click()
       
       checkout_page = True

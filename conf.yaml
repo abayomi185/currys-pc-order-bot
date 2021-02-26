@@ -1,3 +1,5 @@
+checkout_addon: False
+
 driver_file_path: ./chromedriver
 
 #Sites redundant at the moment
