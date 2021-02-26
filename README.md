@@ -29,7 +29,6 @@ Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in yo
 
 > Ensure that you have set up a Currys account and address info before use
 
-<br/>
 ### To run the bot:
 ```python3 buy-bot3.py <currys_pc_product_link>```
 
