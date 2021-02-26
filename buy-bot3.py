@@ -143,7 +143,8 @@ def run_bot_instance(site_link):
       pass
       
     if not checkout_page:
-      print("Stock is not available")
+      currentDT = datetime.datetime.now()
+      print("Stock is not available " + currentDT.strftime("%H:%M:%S"))
       time.sleep(random.random()*10)
       driver.refresh()
     # else:
