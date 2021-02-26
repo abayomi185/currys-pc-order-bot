@@ -10,6 +10,7 @@ import os
 import sys
 import threading
 from discord_webhook import DiscordWebhook
+import datetime
 
 conf_import = "./conf.yaml"
 secrets_import = "./secrets.yaml"
