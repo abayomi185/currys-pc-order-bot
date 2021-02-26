@@ -36,6 +36,8 @@ Replacing ```<currys_pc_product_link>``` with the link to the product you wish t
 
 Good luck!
 
+Diamond Hands 💎💎 && To the Moon 🚀🚀
+
 <br/>
 
 Notice:
