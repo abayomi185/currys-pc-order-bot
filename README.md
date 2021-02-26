@@ -1,5 +1,5 @@
 # currys-pc-order-bot
-To hit back against the woes I encountered trying to get a GPU in this "trying times"
+To hit back against the woes I encountered trying to get a GPU in this "trying times".
 <br>
 > Use this software at YOUR OWN RISK. This software offers no guarantee. I do not assume any risk you might incure from using this software.
 
@@ -10,6 +10,7 @@ To use the bot, confirm that you have chrome, python-pip. It would be ideal to i
 Install the python dependencies using:
 ```pip install -r requirements.txt```
 
+<br/>
 Next, you will need to get chrome drivers. Confirm your version of Chrome or Chromium (Other chromium based browsers should work too) using the command or gui method.
 
 For Chrome
