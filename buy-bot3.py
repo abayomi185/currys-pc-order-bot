@@ -162,7 +162,6 @@ def run_bot_instance(site_link):
 
     # else:
     #   # count = True
-    #   # notify("Stock Alert", "stock available for " + site_link)
     #   # pync.notify("Stock available for " + site_link, open=site_link)
     #   send_notif(site_link)
     #   break
