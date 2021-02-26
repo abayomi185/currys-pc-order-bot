@@ -10,6 +10,7 @@ import os
 import sys
 import threading
 from discord_webhook import DiscordWebhook
+import datetime
 
 conf_import = "./conf.yaml"
 secrets_import = "./secrets.yaml"
@@ -29,6 +30,8 @@ driver.set_window_size(1026,1000)
 
 driver_wait = 10
 
+refresh_time = 5
+
 def send_notif(message):
   webhook = DiscordWebhook(url=webhook_url,
                   content='{} Stock is available for\n{}'.format(myid, message))
@@ -47,12 +50,13 @@ def run_bot_instance(site_link):
 
   stock = False
   count = False
+  purchased = False
 
-  while not stock:
+  while not stock and not purchased:
 
     checkout_page = False
     basket_checkout = False
-    purchased = False
+    payment_page = False
 
     # if count:
       # driver.back()
@@ -66,6 +70,7 @@ def run_bot_instance(site_link):
         except:
           pass
       
+      #Continue to basket
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Continue to basket")]'))).click()
       
       checkout_page = True
@@ -110,6 +115,8 @@ def run_bot_instance(site_link):
       #Card button
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[4]/div[2]/div[2]/div[2]/div[2]/div[1]/button'))).click()
 
+      payment_page = True
+
       #Card Number
       card_no = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="cardNumber"]')))
       card_no.clear()
@@ -138,25 +145,27 @@ def run_bot_instance(site_link):
       # Pay
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="submitButton"]'))).click()
       purchased = True
+      if config['discord']:
+        send_notif2(site_link)
 
     except:
       pass
       
     if not checkout_page:
-      print("Stock is not available")
-      time.sleep(random.random()*10)
+      currentDT = datetime.datetime.now()
+      print("Stock is not available " + currentDT.strftime("%H:%M:%S"))
+      time.sleep(random.random()*refresh_time)
       driver.refresh()
+    else:
+      time.sleep(random.random()*refresh_time)
+      driver.get(site_link)
+
     # else:
     #   # count = True
     #   # notify("Stock Alert", "stock available for " + site_link)
     #   # pync.notify("Stock available for " + site_link, open=site_link)
     #   send_notif(site_link)
     #   break
-
-    if purchased:
-      if config['discord']:
-        send_notif2(site_link)
-
 
 if __name__ == "__main__":
   site = sys.argv[1]
