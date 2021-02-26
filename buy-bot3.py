@@ -69,7 +69,8 @@ def run_bot_instance(site_link):
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Continue to basket")]'))).click()
       
       checkout_page = True
-      send_notif(site_link)
+      if config['discord']:
+        send_notif(site_link)
 
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[2]/div/div/div[1]/button'))).click()
       
@@ -153,11 +154,11 @@ def run_bot_instance(site_link):
     #   break
 
     if purchased:
-      send_notif2(site_link)
+      if config['discord']:
+        send_notif2(site_link)
 
 
 if __name__ == "__main__":
   site = sys.argv[1]
   run_bot_instance(site_link=site)
-  # send_notif("testing")
 

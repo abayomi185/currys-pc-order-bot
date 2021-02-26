@@ -25,7 +25,9 @@ You're about ready to get your item from Curry's PC.
 
 <br/>
 
-Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in your personal details. 
+Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in your personal details.
+
+**Discord Notifications** can be enabled in ```conf.yaml``` and filling the *discord-webhook-url* in ```secrets.yaml```. The user-id would mention you when stock is available and/or item has been purchased (This config is optional).
 
 > Ensure that you have set up a Currys account and address info before use
 

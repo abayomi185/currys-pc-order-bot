@@ -1,3 +1,13 @@
+#Config File
+
+#To enable or disable discord notifications
+#If True, ensure id and webhook is filled in secrets.yaml
+discord: True
+
+#disabled at the moment
+#10 recommended for selenium
+#action_delay: 10
+
 checkout_addon: False
 
 driver_file_path: ./chromedriver
