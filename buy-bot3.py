@@ -26,7 +26,7 @@ webhook_url = secrets['webhook_url']
 
 driver = webdriver.Chrome(config['driver_file_path'])
 
-driver.set_window_size(1026,1000)
+driver.set_window_size(config['browser_width'],config['browser_height'])
 
 driver_wait = 10
 
@@ -58,8 +58,10 @@ def run_bot_instance(site_link):
     basket_checkout = False
     payment_page = False
 
-    # if count:
-      # driver.back()
+    # print(driver.current_url)
+
+    if driver.current_url != site_link:
+      driver.get(site_link)
 
     try:
       add_to_basket = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="product-actions"]/div[4]/div[1]/button'))).click()
