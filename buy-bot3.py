@@ -79,8 +79,12 @@ def run_bot_instance(site_link):
       if config['discord']:
         send_notif(site_link)
 
-      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[2]/div/div/div[1]/button'))).click()
-      
+      #time.sleep(1)
+
+      #Go to checkout
+      # WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[2]/div/div/div[1]/button'))).click()
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//span[contains(text(), "Go to checkout")]//parent::button'))).click()
+
       postcode = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[aria-label="Postcode Checker"]')))
       postcode.clear()
       postcode.send_keys(secrets['postcode'])
