@@ -1,4 +1,5 @@
 #Config File
+debug: False
 
 #To enable or disable discord notifications
 #If True, ensure id and webhook is filled in secrets.yaml

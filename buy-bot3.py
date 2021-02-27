@@ -79,7 +79,7 @@ def run_bot_instance(site_link):
       if config['discord']:
         send_notif(site_link)
 
-      #time.sleep(1)
+      time.sleep(1)
 
       #Go to checkout
       # WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[2]/div/div/div[1]/button'))).click()
@@ -154,8 +154,9 @@ def run_bot_instance(site_link):
       if config['discord']:
         send_notif2(site_link)
 
-    except:
-      pass
+    except Exception as e:
+      if config['debug'] and checkout_page:
+        print(e)
       
     if not checkout_page:
       currentDT = datetime.datetime.now()
@@ -165,6 +166,7 @@ def run_bot_instance(site_link):
     else:
       time.sleep(random.random()*refresh_time)
       driver.get(site_link)
+
 
     # else:
     #   # count = True
