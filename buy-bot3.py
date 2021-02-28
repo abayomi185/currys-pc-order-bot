@@ -24,9 +24,10 @@ with open(secrets_import, "r") as secrets_file:
 myid = secrets['disord_userid']
 webhook_url = secrets['webhook_url']
 
-driver = webdriver.Chrome(config['driver_file_path'])
-
-driver.set_window_size(config['browser_width'],config['browser_height'])
+def create_driver():
+  driver = webdriver.Chrome(config['driver_file_path'])
+  driver.set_window_size(config['browser_width'],config['browser_height'])
+  return driver
 
 driver_wait = 10
 
@@ -43,9 +44,17 @@ def send_notif2(message):
   response = webhook.execute()
 
 
-def run_bot_instance(site_link):
+def run_bot_instance(driver_instance, product):
 
-  driver.get(site_link)
+  #Stagger threads for multiple instances
+  time.sleep(refresh_time + (random.random()*10))
+
+  driver = driver_instance()
+
+  item_name = product['name']
+  item_url = product['site']
+
+  driver.get(item_url)
   WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
 
   stock = False
@@ -61,8 +70,8 @@ def run_bot_instance(site_link):
 
     # print(driver.current_url)
 
-    if driver.current_url != site_link:
-      driver.get(site_link)
+    if driver.current_url != item_url:
+      driver.get(item_url)
 
     try:
       add_to_basket = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="product-actions"]/div[4]/div[1]/button'))).click()
@@ -88,7 +97,7 @@ def run_bot_instance(site_link):
       checkout_page = True
       basket_count += 1
       if config['discord']:
-        send_notif(site_link)
+        send_notif(item_url)
 
       time.sleep(1)
 
@@ -162,7 +171,7 @@ def run_bot_instance(site_link):
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="submitButton"]'))).click()
       purchased = True
       if config['discord']:
-        send_notif2(site_link)
+        send_notif2(item_url)
       time.sleep(120)
 
     except Exception as e:
@@ -170,21 +179,31 @@ def run_bot_instance(site_link):
         print(e)
       
     if purchased:
-      print("End of script")
+      print("End of script for {}".format(item_name))
       exit()
     
     if checkout_page:
       time.sleep(random.random()*refresh_time)
-      driver.get(site_link)
+      driver.get(item_url)
     else:
       currentDT = datetime.datetime.now()
-      print("Stock is not available " + currentDT.strftime("%H:%M:%S"))
+      print("Stock is not available for {} | ".format(item_name) + currentDT.strftime("%H:%M:%S"))
       time.sleep(random.random()*refresh_time)
       driver.refresh()
 
     # pync.notify("Stock available for " + site_link, open=site_link)
 
 if __name__ == "__main__":
-  site = sys.argv[1]
-  run_bot_instance(site_link=site)
+
+  no_of_sites = len(config['product_data'])
+
+  # drivers = {}
+  # for x in range(no_of_sites):
+  #   drivers["{}".format(x)] = create_driver
+
+  driver = create_driver
+
+  for x in range(no_of_sites):
+    t = threading.Thread(target=run_bot_instance, args=[driver, config['product_data'][x]] )
+    t.start()
 

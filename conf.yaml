@@ -1,4 +1,7 @@
 #Config File
+
+driver_file_path: ./chromedriver
+
 debug: False
 
 #Refresh time (in seconds) of 5 has a total delay of about 15 seconds per cycle
@@ -18,13 +21,17 @@ discord: True
 browser_width: 1026
 browser_height: 1000
 
+#Checkout addon True is needed for products that have a
+#care/protection plan pop-up
 checkout_addon: False
 
-driver_file_path: ./chromedriver
+#Enter the product_page url for the items you wish to buy
+product_data:
+  - 
+    name: Eagle 3060 Ti
+    site: https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-oc-graphics-card-10219306-pdt.html
+  # - 
+  #  name: Eagle 3060 Ti OC
+  #  site: https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-graphics-card-10219307-pdt.html
 
-#Sites redundant at the moment
-#To run multiple instance run main command with a different link
-# sites:
-#   -
-#   - 
 
