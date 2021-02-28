@@ -165,6 +165,13 @@ def run_bot_instance(site_link):
     
     if not checkout_page:
       currentDT = datetime.datetime.now()
+      
+      #if delivery is not available, remove all items from basket
+      try:
+        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[3]/a/span[2]'))).click()
+      except:
+        pass
+      
       print("Stock is not available " + currentDT.strftime("%H:%M:%S"))
       time.sleep(random.random()*refresh_time)
       driver.refresh()
