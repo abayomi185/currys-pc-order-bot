@@ -3,6 +3,8 @@ To hit back against the woes I encountered trying to get a GPU in this "trying t
 <br>
 > Use this software at YOUR OWN RISK. This software offers no guarantee. I do not assume any risk you might incure from using this software.
 
+<br/>
+
 ### Getting Started
 
 To use the bot, confirm that you have chrome and python-pip. It would be ideal to install virtualenv or similar too.
@@ -22,13 +24,15 @@ The Chrome driver should be named ```chromedriver``` and placed in the project r
 
 <br/>
 
-#### You are about ready to get your item from Curry's PC.
+### You are about ready to get your item from Currys PC.
 
 Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in your personal details.
 
 **Discord Notifications** can be enabled in ```conf.yaml``` and filling the *discord-webhook-url* in ```secrets.yaml```. The user-id would mention you when stock is available and/or item(s) has been purchased (This config is optional).
 
 > Ensure that you have set up a Currys account and address info before use
+
+<br/>
 
 ### Launching the bot
 Run the command:
