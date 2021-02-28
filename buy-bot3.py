@@ -51,6 +51,7 @@ def run_bot_instance(site_link):
   stock = False
   count = False
   purchased = False
+  basket_count = 0
 
   while not stock and not purchased:
 
@@ -75,14 +76,23 @@ def run_bot_instance(site_link):
       #Continue to basket
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Continue to basket")]'))).click()
       
+      if basket_count > 0:
+        #Reset basket
+        try:
+          WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//span[contains(text(), "Remove")]//parent::a'))).click()
+          basket_count = 0
+          raise ValueError('Deliberate exception raised to reset bot to clean state')
+        except:
+          pass
+
       checkout_page = True
+      basket_count += 1
       if config['discord']:
         send_notif(site_link)
 
       time.sleep(1)
 
       #Go to checkout
-      # WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[2]/div/div/div[1]/button'))).click()
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//span[contains(text(), "Go to checkout")]//parent::button'))).click()
 
       postcode = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[aria-label="Postcode Checker"]')))
@@ -163,21 +173,14 @@ def run_bot_instance(site_link):
       print("End of script")
       exit()
     
-    if not checkout_page:
+    if checkout_page:
+      time.sleep(random.random()*refresh_time)
+      driver.get(site_link)
+    else:
       currentDT = datetime.datetime.now()
-      
-      #if delivery is not available, remove all items from basket
-      try:
-        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[3]/a/span[2]'))).click()
-      except:
-        pass
-      
       print("Stock is not available " + currentDT.strftime("%H:%M:%S"))
       time.sleep(random.random()*refresh_time)
       driver.refresh()
-    else:
-      time.sleep(random.random()*refresh_time)
-      driver.get(site_link)
 
     # pync.notify("Stock available for " + site_link, open=site_link)
 
