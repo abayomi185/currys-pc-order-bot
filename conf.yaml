@@ -1,6 +1,10 @@
 #Config File
 debug: False
 
+#Refresh time (in seconds) of 5 has a total delay of about 15 seconds per cycle
+#this is dependent on network speed and computer performance.
+refresh_time: 5
+
 #To enable or disable discord notifications
 #If True, ensure id and webhook is filled in secrets.yaml
 discord: True

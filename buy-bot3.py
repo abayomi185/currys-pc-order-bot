@@ -30,7 +30,7 @@ driver.set_window_size(config['browser_width'],config['browser_height'])
 
 driver_wait = 10
 
-refresh_time = 5
+refresh_time = config['refresh_time']
 
 def send_notif(message):
   webhook = DiscordWebhook(url=webhook_url,
