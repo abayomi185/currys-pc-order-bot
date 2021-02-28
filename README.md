@@ -18,7 +18,7 @@ For Chrome
 
 You can then get the Chrome driver corresponding to your chrome version and Operating System from here: [https://chromedriver.chromium.org]()
 
-> The Chrome driver should be named ```chromedriver``` and placed in the project root folder.
+The Chrome driver should be named ```chromedriver``` and placed in the project root folder.
 
 <br/>
 You're about ready to get your item from Curry's PC.
