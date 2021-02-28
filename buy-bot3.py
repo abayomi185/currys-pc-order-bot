@@ -153,6 +153,7 @@ def run_bot_instance(site_link):
       purchased = True
       if config['discord']:
         send_notif2(site_link)
+      time.sleep(60)
 
     except Exception as e:
       if config['debug'] and checkout_page:
@@ -167,12 +168,9 @@ def run_bot_instance(site_link):
       time.sleep(random.random()*refresh_time)
       driver.get(site_link)
 
-
-    # else:
-    #   # count = True
-    #   # pync.notify("Stock available for " + site_link, open=site_link)
-    #   send_notif(site_link)
-    #   break
+    # pync.notify("Stock available for " + site_link, open=site_link)
+    if purchased:
+      print("End of script")
 
 if __name__ == "__main__":
   site = sys.argv[1]
