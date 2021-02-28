@@ -5,7 +5,7 @@ To hit back against the woes I encountered trying to get a GPU in this "trying t
 
 ### Getting Started
 
-To use the bot, confirm that you have chrome, python-pip. It would be ideal to install virtualenv or similar too.
+To use the bot, confirm that you have chrome and python-pip. It would be ideal to install virtualenv or similar too.
 
 Install the python dependencies using:
 ```pip install -r requirements.txt```
@@ -27,11 +27,12 @@ You're about ready to get your item from Curry's PC.
 
 Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in your personal details.
 
-**Discord Notifications** can be enabled in ```conf.yaml``` and filling the *discord-webhook-url* in ```secrets.yaml```. The user-id would mention you when stock is available and/or item has been purchased (This config is optional).
+**Discord Notifications** can be enabled in ```conf.yaml``` and filling the *discord-webhook-url* in ```secrets.yaml```. The user-id would mention you when stock is available and/or item(s) has been purchased (This config is optional).
 
 > Ensure that you have set up a Currys account and address info before use
 
-### To run the bot:
+### Launching the bot
+Run the command:
 ```python3 buy-bot3.py <currys_pc_product_link>```
 
 Replacing ```<currys_pc_product_link>``` with the link to the product you wish to buy.
@@ -43,6 +44,6 @@ Diamond Hands 💎💎 && To the Moon 🚀🚀
 <br/>
 
 Notice:
-- Items with add-on packages before placing in basket will cause program to fail. Fix this by changing the key ```checkout_addon``` in ```conf.yaml``` to ```True```
+- Items with add-on packages (protection plans and such) before placing in basket will cause program to fail. Fix this by changing the key ```checkout_addon``` in ```conf.yaml``` to ```True```
 
 
