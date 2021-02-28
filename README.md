@@ -20,10 +20,7 @@ You can then get the Chrome driver corresponding to your chrome version and Oper
 
 The Chrome driver should be named ```chromedriver``` and placed in the project root folder.
 
-<br/>
-You're about ready to get your item from Curry's PC.
-
-<br/>
+#### You are about ready to get your item from Curry's PC.
 
 Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in your personal details.
 
