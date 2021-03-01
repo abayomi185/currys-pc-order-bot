@@ -35,10 +35,11 @@ Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in yo
 <br/>
 
 ### Launching the bot
-Run the command:
-```python3 buy-bot3.py <currys_pc_product_link>```
 
-Replacing ```<currys_pc_product_link>``` with the link to the product you wish to buy.
+Fill in the name and url values under product_data in the '''conf.yaml''' file to setup bot instances.
+
+Then run the command:
+```python3 buy-bot3.py```
 
 Good luck!
 
