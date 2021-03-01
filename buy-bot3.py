@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.chrome.options import Options
 import yaml
 import random
 import time
@@ -24,14 +25,20 @@ with open(secrets_import, "r") as secrets_file:
 myid = secrets['disord_userid']
 webhook_url = secrets['webhook_url']
 
-def create_driver():
-  driver = webdriver.Chrome(config['driver_file_path'])
-  driver.set_window_size(config['browser_width'],config['browser_height'])
-  return driver
-
 driver_wait = 10
-
 refresh_time = config['refresh_time']
+
+def create_driver():
+  if config['headless_mode']:
+    chromium_options = Options()
+    chromium_options.add_argument("--headless")
+    driver = webdriver.Chrome(config['driver_file_path'], options=chromium_options)
+    return driver
+  else:
+    driver = webdriver.Chrome(config['driver_file_path'])
+    driver.set_window_size(config['browser_width'],config['browser_height'])
+    return driver
+
 
 def send_notif(message):
   webhook = DiscordWebhook(url=webhook_url,
@@ -43,16 +50,32 @@ def send_notif2(message):
                   content='{} Item has been purchased\n{}'.format(myid, message))
   response = webhook.execute()
 
+def is_ping_in_cooldown(prev_ping):
+  # global last_ping
+  if prev_ping == 0: #initial state
+    new_ping = datetime.datetime.now()
+    return (False, new_ping)
+  else:
+    diff = datetime.datetime.now() - prev_ping
+    diff_minutes = divmod(diff.total_seconds(), 60)[0]
+    if diff_minutes > config['ping_cooldown']:
+      return (False, prev_ping)
+  return (True, prev_ping)
 
 def run_bot_instance(driver_instance, product):
 
   #Stagger threads for multiple instances
   time.sleep(refresh_time + (random.random()*10))
 
+  #Create new Chromium driver instance
   driver = driver_instance()
 
+  last_ping = 0
+
+  #Destructure product
   item_name = product['name']
-  item_url = product['site']
+  item_qty = 1
+  item_url = product['webpage']
 
   driver.get(item_url)
   WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
@@ -60,15 +83,12 @@ def run_bot_instance(driver_instance, product):
   stock = False
   count = False
   purchased = False
-  basket_count = 0
 
   while not stock and not purchased:
 
     checkout_page = False
     basket_checkout = False
     payment_page = False
-
-    # print(driver.current_url)
 
     if driver.current_url != item_url:
       driver.get(item_url)
@@ -84,22 +104,27 @@ def run_bot_instance(driver_instance, product):
       
       #Continue to basket
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Continue to basket")]'))).click()
-      
-      if basket_count > 0:
-        #Reset basket
-        try:
-          WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//span[contains(text(), "Remove")]//parent::a'))).click()
-          basket_count = 0
-          raise ValueError('Deliberate exception raised to reset bot to clean state')
-        except:
-          pass
 
       checkout_page = True
-      basket_count += 1
       if config['discord']:
-        send_notif(item_url)
+        cooldown = is_ping_in_cooldown(prev_ping=last_ping)
+        if not cooldown[0]:
+          send_notif(item_url)
+        last_ping = cooldown[1]
 
       time.sleep(1)
+
+      basket_count_str = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span').text
+      basket_count = int(basket_count_str)
+
+      if basket_count > item_qty:
+        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div[data-element="DropdownWrapper"]'))).click()
+        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/ul/li[1]'))).click()
+
+      time.sleep(1)
+
+      if config['disable_purchase']:
+        raise ValueError('Purchase disabled, returning to product page for {}'.format(item_name))
 
       #Go to checkout
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//span[contains(text(), "Go to checkout")]//parent::button'))).click()
@@ -175,7 +200,10 @@ def run_bot_instance(driver_instance, product):
       time.sleep(120)
 
     except Exception as e:
-      if config['debug'] and checkout_page:
+      if config['debug'] == 1:
+        if checkout_page:
+          print(e)
+      elif config['debug'] == 2:
         print(e)
       
     if purchased:
@@ -196,10 +224,6 @@ def run_bot_instance(driver_instance, product):
 if __name__ == "__main__":
 
   no_of_sites = len(config['product_data'])
-
-  # drivers = {}
-  # for x in range(no_of_sites):
-  #   drivers["{}".format(x)] = create_driver
 
   driver = create_driver
 
