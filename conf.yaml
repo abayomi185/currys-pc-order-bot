@@ -39,13 +39,19 @@ browser_height: 1000
 #care/protection plan pop-up
 checkout_addon: False
 
+#Not currently in use; suggested by Oliver
+#To use a single browser window rather than multiple browser instances
+cycle_through_links: False
+
 #Enter the product_page url for the items you wish to buy
 product_data:
   - 
     name: Eagle 3060 Ti
     qty: 1 #Not in use in this release
     webpage: https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-oc-graphics-card-10219306-pdt.html
+    purchased: False #Keep this value as False. Needed for cycle_through_links option
   - 
     name: Eagle 3060 Ti OC
     qty: 1 #Not in use in this release
     webpage: https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-graphics-card-10219307-pdt.html
+    purchased: False #Keep this value as False. Needed for cycle_through_links option

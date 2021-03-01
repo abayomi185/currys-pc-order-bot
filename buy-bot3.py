@@ -4,6 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException
 import yaml
 import random
 import time
@@ -27,6 +28,8 @@ webhook_url = secrets['webhook_url']
 
 driver_wait = 10
 refresh_time = config['refresh_time']
+
+browser_launched = False
 
 def create_driver():
   if config['headless_mode']:
@@ -62,12 +65,16 @@ def is_ping_in_cooldown(prev_ping):
       return (False, prev_ping)
   return (True, prev_ping)
 
-def run_bot_instance(driver_instance, product):
+def run_bot_instance(driver_instance, product, product_index):
 
   #Stagger threads for multiple instances
   time.sleep(refresh_time + (random.random()*10))
 
-  #Create new Chromium driver instance
+  # if config['product_data'][product_index]['purchased']:
+  #   return True
+
+  # if not config['cycle_through_links']:
+  #   #Create new Chromium driver instance
   driver = driver_instance()
 
   last_ping = 0
@@ -78,7 +85,13 @@ def run_bot_instance(driver_instance, product):
   item_url = product['webpage']
 
   driver.get(item_url)
-  WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
+  accepted_cookies = False
+
+  try:
+    WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
+    accepted_cookies = True
+  except:
+    pass
 
   stock = False
   count = False
@@ -92,6 +105,12 @@ def run_bot_instance(driver_instance, product):
 
     if driver.current_url != item_url:
       driver.get(item_url)
+
+    if accepted_cookies == False:
+      try:
+        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
+      except:
+        pass
 
     try:
       add_to_basket = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="product-actions"]/div[4]/div[1]/button'))).click()
@@ -114,6 +133,13 @@ def run_bot_instance(driver_instance, product):
 
       time.sleep(1)
 
+      while True:
+        try:
+          WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div[data-element="DropdownWrapper"]')))
+          break
+        except NoSuchElementException:
+          continue
+      # basket_count_str = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span')))
       basket_count_str = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span').text
       basket_count = int(basket_count_str)
 
@@ -202,12 +228,19 @@ def run_bot_instance(driver_instance, product):
     except Exception as e:
       if config['debug'] == 1:
         if checkout_page:
+          print('debug level 1')
+          print("Error occured somewhere after checkout for " + item_name)
           print(e)
       elif config['debug'] == 2:
+        print('debug level 2')
         print(e)
+        pass
       
     if purchased:
       print("End of script for {}".format(item_name))
+      if config['cycle_through_links']:
+        # return True
+        pass
       exit()
     
     if checkout_page:
@@ -217,17 +250,31 @@ def run_bot_instance(driver_instance, product):
       currentDT = datetime.datetime.now()
       print("Stock is not available for {} | ".format(item_name) + currentDT.strftime("%H:%M:%S"))
       time.sleep(random.random()*refresh_time)
-      driver.refresh()
+      if config['cycle_through_links']:
+        # return False
+        pass
+      else:
+        driver.refresh()
 
     # pync.notify("Stock available for " + site_link, open=site_link)
 
 if __name__ == "__main__":
 
-  no_of_sites = len(config['product_data'])
+  counter = 0
+  no_of_items = len(config['product_data'])
 
   driver = create_driver
 
-  for x in range(no_of_sites):
-    t = threading.Thread(target=run_bot_instance, args=[driver, config['product_data'][x]] )
-    t.start()
+  if config['cycle_through_links']:
+    while counter < no_of_items:
+      config['product_data'][counter]['purchased'] = run_bot_instance(driver, config['product_data'][counter], counter)
+      if counter == no_of_items:
+        counter = 0
+      else:
+        counter += 1
+
+  else:
+    for x in range(no_of_items):
+      t = threading.Thread(target=run_bot_instance, args=[driver, config['product_data'][x], x])
+      t.start()
 
