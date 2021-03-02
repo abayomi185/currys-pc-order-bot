@@ -3,6 +3,8 @@ To hit back against the woes I encountered trying to get a GPU in this "trying t
 <br>
 > Use this software at YOUR OWN RISK. This software offers no guarantee. I do not assume any risk you might incure from using this software.
 
+<br/>
+
 ### Getting Started
 
 To use the bot, confirm that you have chrome and python-pip. It would be ideal to install virtualenv or similar too.
@@ -22,7 +24,7 @@ The Chrome driver should be named ```chromedriver``` and placed in the project r
 
 <br/>
 
-#### You are about ready to get your item from Curry's PC.
+### You are about ready to get your item from Currys PC.
 
 Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in your personal details.
 
@@ -30,11 +32,14 @@ Rename the file ```secrets-template.yaml``` to ```secrets.yaml``` and fill in yo
 
 > Ensure that you have set up a Currys account and address info before use
 
-### Launching the bot
-Run the command:
-```python3 buy-bot3.py <currys_pc_product_link>```
+<br/>
 
-Replacing ```<currys_pc_product_link>``` with the link to the product you wish to buy.
+### Launching the bot
+
+Fill in the name and url values under product_data in the '''conf.yaml''' file to setup bot instances.
+
+Then run the command:
+```python3 buy-bot3.py```
 
 Good luck!
 

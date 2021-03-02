@@ -1,11 +1,35 @@
 #Config File
-debug: False
+
+driver_file_path: ./chromedriver
+
+#Debug levels
+# 0 - shows no errors
+# 1 - shows specific errors
+# 2 - shows all errors 
+debug: 2
+
+#ENSURE THAT YOU TEST WITH GUI BEFORE SETTING headless_mode to True
+#Only tested 
+headless_mode: False
+
+#To disable purchases and keep notifications
+disable_purchase: False
+
+#Not in use
+#disable_store_collection: False
+
+#Refresh time (in seconds) of 5 has a total delay of about 15 seconds per cycle
+#this is dependent on network speed and computer performance.
+refresh_time: 5
 
 #To enable or disable discord notifications
 #If True, ensure id and webhook is filled in secrets.yaml
 discord: True
 
-#disabled at the moment
+#Cooldown (in minutes) for discord notifications
+ping_cooldown: 10
+
+#Not used at the moment
 #10 recommended for selenium
 #action_delay: 10
 
@@ -14,13 +38,23 @@ discord: True
 browser_width: 1026
 browser_height: 1000
 
+#Checkout addon True is needed for products that have a
+#care/protection plan pop-up
 checkout_addon: False
 
-driver_file_path: ./chromedriver
+#Not currently in use; suggested by Oliver
+#To use a single browser window rather than multiple browser instances
+cycle_through_links: False
 
-#Sites redundant at the moment
-#To run multiple instance run main command with a different link
-# sites:
-#   -
-#   - 
-
+#Enter the product_page url for the items you wish to buy
+product_data:
+  - 
+    name: Eagle 3060 Ti
+    qty: 1 #Not in use in this release
+    webpage: https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-oc-graphics-card-10219306-pdt.html
+    purchased: False #Keep this value as False. Needed for cycle_through_links option
+  - 
+    name: Eagle 3060 Ti OC
+    qty: 1 #Not in use in this release
+    webpage: https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-graphics-card-10219307-pdt.html
+    purchased: False #Keep this value as False. Needed for cycle_through_links option
