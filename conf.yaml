@@ -35,7 +35,7 @@ ping_cooldown: 10
 
 #You may need to change these values, particularly width to make sure
 #the Currys site is in desktop mode (desktop breakpoint)
-browser_width: 1026
+browser_width: 1400
 browser_height: 1000
 
 #Checkout addon True is needed for products that have a
