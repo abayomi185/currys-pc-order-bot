@@ -36,6 +36,7 @@ def create_driver():
   if config['headless_mode']:
     chromium_options = Options()
     chromium_options.add_argument("--headless")
+    chromium_options.add_argument("--log-level=3")
     driver = webdriver.Chrome(config['driver_file_path'], options=chromium_options)
     return driver
   else:
