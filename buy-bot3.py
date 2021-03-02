@@ -37,6 +37,7 @@ def create_driver():
     chromium_options = Options()
     chromium_options.add_argument("--headless")
     chromium_options.add_argument("--log-level=3")
+    chromium_options.add_argument("--window-size=1920,1200")
     driver = webdriver.Chrome(config['driver_file_path'], options=chromium_options)
     return driver
   else:
