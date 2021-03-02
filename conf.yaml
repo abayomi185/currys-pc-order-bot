@@ -15,6 +15,9 @@ headless_mode: False
 #To disable purchases and keep notifications
 disable_purchase: False
 
+#Not in use
+#disable_store_collection: False
+
 #Refresh time (in seconds) of 5 has a total delay of about 15 seconds per cycle
 #this is dependent on network speed and computer performance.
 refresh_time: 5

@@ -13,6 +13,7 @@ import sys
 import threading
 from discord_webhook import DiscordWebhook
 import datetime
+import traceback
 
 conf_import = "./conf.yaml"
 secrets_import = "./secrets.yaml"
@@ -96,6 +97,7 @@ def run_bot_instance(driver_instance, product, product_index):
   stock = False
   count = False
   purchased = False
+  # store_collection = False
 
   while not stock and not purchased:
 
@@ -121,8 +123,11 @@ def run_bot_instance(driver_instance, product, product_index):
         except:
           pass
       
-      #Continue to basket
-      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Continue to basket")]'))).click()
+      try:
+        #Continue to basket
+        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Continue to basket")]'))).click()
+      except:
+        pass
 
       checkout_page = True
       if config['discord']:
@@ -149,6 +154,15 @@ def run_bot_instance(driver_instance, product, product_index):
 
       time.sleep(1)
 
+      #Ensures delivery is available
+      delivery_available = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[3]/div[1]/div/div/div/div[1]').get_attribute('data-active') 
+      if delivery_available == 'false':
+        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[3]/div[2]'))).click()
+        time.sleep(1)
+        if delivery_available == 'false':
+          print('Delivery not available for {}'.format(item_name))
+          raise ValueError('Delivery Unavailable')
+
       if config['disable_purchase']:
         raise ValueError('Purchase disabled, returning to product page for {}'.format(item_name))
 
@@ -160,10 +174,18 @@ def run_bot_instance(driver_instance, product, product_index):
       postcode.send_keys(secrets['postcode'])
       time.sleep(1)
 
+      # try:
+
       #search postcode
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="delivery_location"]/button[2]'))).click()
       # WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[aria-label="Submit Search"]'))).click()
       # time.sleep(2)
+
+      # except:
+      #   WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="collection_location"]/button[2]'))).click()
+      #   store_collection = True
+      #   if config['disable_store_collection']:
+      #     raise ValueError('Store Collection is disabled, purchase will not proceed')
       
       #click delivery
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[2]/div[2]/div[3]/div[2]/div[1]/ul/li[2]'))).click()
@@ -228,12 +250,10 @@ def run_bot_instance(driver_instance, product, product_index):
     except Exception as e:
       if config['debug'] == 1:
         if checkout_page:
-          print('debug level 1')
           print("Error occured somewhere after checkout for " + item_name)
-          print(e)
+          traceback.print_exc()
       elif config['debug'] == 2:
-        print('debug level 2')
-        print(e)
+        traceback.print_exc()
         pass
       
     if purchased:
