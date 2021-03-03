@@ -48,12 +48,21 @@ def create_driver():
 
 def send_notif(message):
   webhook = DiscordWebhook(url=webhook_url,
-                  content='{} Stock is available for\n{}'.format(myid, message))
+                  content='{} Collection is available for\n{}'.format(myid, message))
   response = webhook.execute()
 
 def send_notif2(message):
   webhook = DiscordWebhook(url=webhook_url,
                   content='{} Item has been purchased\n{}'.format(myid, message))
+  response = webhook.execute()
+
+def send_notif3(message):
+  webhook = DiscordWebhook(url=webhook_url,
+                  content='{} Delivery is available for\n{}'.format(myid, message))
+  response = webhook.execute()
+def send_notif4(message):
+  webhook = DiscordWebhook(url=webhook_url,
+                  content='{} Payment page has been reached\n{}'.format(myid, message))
   response = webhook.execute()
 
 def is_ping_in_cooldown(prev_ping):
@@ -147,24 +156,28 @@ def run_bot_instance(driver_instance, product, product_index):
         except NoSuchElementException:
           continue
       # basket_count_str = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span')))
-      basket_count_str = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span').text
+      basket_count_str = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span').text
       basket_count = int(basket_count_str)
 
       if basket_count > item_qty:
         WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div[data-element="DropdownWrapper"]'))).click()
-        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/ul/li[1]'))).click()
+        WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/ul/li[1]'))).click()
         time.sleep(1)
 
       time.sleep(1)
 
       #Ensures delivery is available
-      delivery_available = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[3]/div[1]/div/div/div/div[1]').get_attribute('data-active') 
+      delivery_available = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[3]/div[1]/div[1]/div[1]/div/div[1]').get_attribute('data-active') 
       if delivery_available == 'false':
         WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[3]/div[2]'))).click()
         time.sleep(1)
         if delivery_available == 'false':
           print('Delivery not available for {}'.format(item_name))
           raise ValueError('Delivery Unavailable')
+
+      #Send notification if delivery is available
+      if config['discord']:
+        send_notif3(item_url)
 
       #Go to checkout
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//span[contains(text(), "Go to checkout")]//parent::button'))).click()
@@ -188,18 +201,18 @@ def run_bot_instance(driver_instance, product, product_index):
       #     raise ValueError('Store Collection is disabled, purchase will not proceed')
       
       #click delivery
-      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[2]/div[2]/div[3]/div[2]/div[1]/ul/li[2]'))).click()
+      #WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[2]/div[2]/div[3]/div[2]/div[1]/ul/li[2]'))).click()
       # time.sleep(3)
 
       #click free
-      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[2]/div[2]/div[3]/div[2]/div[2]/div/div[3]/div[1]/button'))).click()
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div[2]/div/div/div[2]/div[2]/div[3]/div[2]/div[2]/div/div[3]/div[1]/button'))).click()
 
       email = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[autocomplete="email"]')))
       email.clear()
       email.send_keys(secrets['email'])
 
       #continue after email
-      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[3]/div[2]/div[2]/div/div/form/button'))).click()
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div[2]/div/div/div[3]/div[2]/div[2]/div/div/form/button'))).click()
       # time.sleep(4)
       time.sleep(1)
 
@@ -211,10 +224,14 @@ def run_bot_instance(driver_instance, product, product_index):
       WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Sign in")]'))).click()
 
       #Card button
-      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div/div/div[4]/div[2]/div[2]/div[2]/div[2]/div[1]/button'))).click()
+      WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div[2]/div/div/div[4]/div[2]/div[2]/div[2]/div[2]/div[1]/button'))).click()
       time.sleep(3)
 
       payment_page = True
+      
+      #Send notification if payment page is reached
+      if config['discord']:
+        send_notif4(item_url)
 
       #Card Number
       card_no = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="cardNumber"]')))
@@ -247,8 +264,10 @@ def run_bot_instance(driver_instance, product, product_index):
         try:
           WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="submitButton"]')))
           print('Test Mode Completed Successfully! Item was not purchased. Returning to product page for {}'.format(item_name))
+          time.sleep(120)
         except:
           print('Test Mode Completed Unsuccessfully! Item was not purchased. Returning to product page for {}'.format(item_name))
+          time.sleep(120)
       else:
         WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="submitButton"]'))).click()
         purchased = True
