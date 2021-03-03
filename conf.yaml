@@ -36,7 +36,7 @@ ping_cooldown: 10
 #You may need to change these values, particularly width to make sure
 #the Currys site is in desktop mode (desktop breakpoint)
 browser_width: 1400
-browser_height: 1000
+browser_height: 1100
 
 #Checkout addon True is needed for products that have a
 #care/protection plan pop-up
@@ -49,12 +49,7 @@ cycle_through_links: False
 #Enter the product_page url for the items you wish to buy
 product_data:
   - 
-    name: Eagle 3060 Ti
+    name: USB Stick
     qty: 1 #Not in use in this release
-    webpage: https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-oc-graphics-card-10219306-pdt.html
-    purchased: False #Keep this value as False. Needed for cycle_through_links option
-  - 
-    name: Eagle 3060 Ti OC
-    qty: 1 #Not in use in this release
-    webpage: https://www.currys.co.uk/gbuk/computing-accessories/components-upgrades/graphics-cards/gigabyte-geforce-rtx-3060-ti-8-gb-eagle-graphics-card-10219307-pdt.html
+    webpage: https://www.currys.co.uk/gbuk/computing-accessories/data-storage/usb-flash-drives/sandisk-cruzer-blade-usb-2-0-memory-stick-16-gb-black-10174637-pdt.html
     purchased: False #Keep this value as False. Needed for cycle_through_links option
