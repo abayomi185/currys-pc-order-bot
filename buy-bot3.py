@@ -138,6 +138,7 @@ def run_bot_instance(driver_instance, product, product_index):
 
       time.sleep(1)
 
+      #Reset basket to qty 1
       while True:
         try:
           WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div[data-element="DropdownWrapper"]')))
@@ -145,7 +146,7 @@ def run_bot_instance(driver_instance, product, product_index):
         except NoSuchElementException:
           continue
       # basket_count_str = WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span')))
-      basket_count_str = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span').text
+      basket_count_str = driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div[2]/div/div/div/div[1]/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div/div/div/span').text
       basket_count = int(basket_count_str)
 
       if basket_count > item_qty:
