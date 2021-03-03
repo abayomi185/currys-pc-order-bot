@@ -149,6 +149,7 @@ def run_bot_instance(driver_instance, product, product_index):
 
       time.sleep(1)
 
+      #Reset basket to qty 1
       while True:
         try:
           WebDriverWait(driver, driver_wait).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div[data-element="DropdownWrapper"]')))
