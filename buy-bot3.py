@@ -303,7 +303,9 @@ def run_bot_instance(driver_instance, product, product_index):
         # return False
         pass
       else:
-        driver.refresh()
+        #Performs Hard-Refresh with Cleared Cache
+        driver.execute_script("location.reload(true);")
+
 
     # pync.notify("Stock available for " + site_link, open=site_link)
 
